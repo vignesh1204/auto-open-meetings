@@ -39,10 +39,11 @@ def get_meeting_info():
     creds = get_creds()
     service = build('calendar', 'v3', credentials=creds)
 
-    # Call the Calendar API
-    now = datetime.datetime.utcnow().isoformat() + 'Z'
+    #Call the Calendar API and get now time
+    now = datetime.datetime.utcnow().isoformat() + 'Z' 
+    #Setting time window for 8 hours after which app will stop running
     now_plus_window = (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).isoformat() + 'Z'
-    print('\nGetting the upcoming 5 events\n')
+    print('\nGetting the upcoming events\n')
     events_result = service.events().list(calendarId='primary', timeMin=now, timeMax=now_plus_window, maxResults=5, singleEvents=True, orderBy='startTime').execute()
     events = events_result.get('items', [])
 
@@ -51,6 +52,7 @@ def get_meeting_info():
         start_time = datetime.datetime.strptime(event['start'].get('dateTime', event['start'].get('date')), '%Y-%m-%dT%H:%M:%S+05:30')
         print(start_time, event['summary'])
 
+        #checking if meeting is on Google meet
         if 'conferenceData' in event:
             if 'meet' in event['conferenceData'].get('entryPoints')[0].get('uri'):
                 meet_link = event['conferenceData'].get('entryPoints')[0].get('uri')
@@ -61,16 +63,16 @@ def get_meeting_info():
                         'start_time': start_time,
                         'meeting_name': event.get('summary')
                     }
-            elif 'description' in event and 'zoom' in event['dedscription']:
-                meet_link = event['description']
-                print("Zoom Link: ", meet_link)
-                if meet_link and is_time_in_future(start_time):
-                    return {
-                        'meet_link': meet_link,
-                        'start_time': start_time,
-                        'meeting_name': event.get('summary')
-                    }
-
+        #checking if meeting is on Zoom
+        elif 'description' in event and 'zoom' in event['dedscription']:
+            meet_link = event['description']
+            print("Zoom Link: ", meet_link)
+            if meet_link and is_time_in_future(start_time):
+                return {
+                    'meet_link': meet_link,
+                    'start_time': start_time,
+                    'meeting_name': event.get('summary')
+                }
         print ('\n')
 
 def is_time_in_future(meet_start_time):
@@ -87,6 +89,7 @@ def get_time_till_next_meeting(meeting_start_time):
     return SLEEP_WINDOW_SECS + 10
 
 def alert_on_meeting(meeting_name):
+    #text to speech function to alert
     alert_message = "Meeting will start now! Click on join now!"
     speech_engine.say(alert_message)
     speech_engine.runAndWait()
