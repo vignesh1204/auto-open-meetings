@@ -55,16 +55,27 @@ def get_meeting_info():
         #checking if meeting is on Google meet
         if 'conferenceData' in event:
             if 'meet' in event['conferenceData'].get('entryPoints')[0].get('uri'):
-                meet_link = event['conferenceData'].get('entryPoints')[0].get('uri')
-                print("Google Meet Link: ", meet_link)
-                if meet_link and is_time_in_future(start_time):
-                    return {
-                        'meet_link': meet_link,
-                        'start_time': start_time,
-                        'meeting_name': event.get('summary')
-                    }
+                #checking if its cloud computing class lol
+                if 'Babukarthik' in event['summary']:
+                    meet_link = event['description'].split()[-1]
+                    print("Google Meet Link(Babu): ", meet_link)
+                    if meet_link and is_time_in_future(start_time):
+                        return {
+                            'meet_link': meet_link,
+                            'start_time': start_time,
+                            'meeting_name': event.get('summary')
+                        }
+                else:
+                    meet_link = event['conferenceData'].get('entryPoints')[0].get('uri')
+                    print("Google Meet Link(Others): ", meet_link)
+                    if meet_link and is_time_in_future(start_time):
+                        return {
+                            'meet_link': meet_link,
+                            'start_time': start_time,
+                            'meeting_name': event.get('summary')
+                        }
         #checking if meeting is on Zoom
-        elif 'description' in event and 'zoom' in event['dedscription']:
+        elif 'description' in event and 'zoom' in event['description']:
             meet_link = event['description']
             print("Zoom Link: ", meet_link)
             if meet_link and is_time_in_future(start_time):
