@@ -12,9 +12,10 @@ import pyttsx3
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar']
-SLEEP_WINDOW_SECS = 60 * 1
+SLEEP_WINDOW_SECS = 60 * 30
 OPEN_MEETING_MINUTES_BEFORE = 0
 speech_engine = pyttsx3.init()
+speech_engine.setProperty('rate',150)
 
 
 def get_creds():
@@ -62,7 +63,6 @@ def get_meeting_info():
             if 'meet' in event['conferenceData'].get('entryPoints')[0].get('uri'):
                 meet_link = event['conferenceData'].get('entryPoints')[0].get('uri')
                 print("Google Meet Link(Others): ", meet_link)
-
         #checking if meeting is on Zoom
         elif 'description' in event and 'zoom' in event['description']:
             meet_link = event['description']
