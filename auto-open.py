@@ -12,8 +12,8 @@ import pyttsx3
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar']
-SLEEP_WINDOW_SECS = 60 * 5
-OPEN_MEETING_MINUTES_BEFORE = 2
+SLEEP_WINDOW_SECS = 60 * 1
+OPEN_MEETING_MINUTES_BEFORE = 0
 speech_engine = pyttsx3.init()
 
 
@@ -52,38 +52,28 @@ def get_meeting_info():
         start_time = datetime.datetime.strptime(event['start'].get('dateTime', event['start'].get('date')), '%Y-%m-%dT%H:%M:%S+05:30')
         print(start_time, event['summary'])
 
-        #checking if meeting is on Google meet
+        #checking if its cloud computing class lol
+        if 'Babukarthik' in event['summary']:
+            meet_link = 'https://' + event['description'].split()[-1]
+            print("Google Meet Link(Babu): ", meet_link)
+
+        #checking if Google meet link is attached
         if 'conferenceData' in event:
             if 'meet' in event['conferenceData'].get('entryPoints')[0].get('uri'):
-                #checking if its cloud computing class lol
-                if 'Babukarthik' in event['summary']:
-                    meet_link = event['description'].split()[-1]
-                    print("Google Meet Link(Babu): ", meet_link)
-                    if meet_link and is_time_in_future(start_time):
-                        return {
-                            'meet_link': meet_link,
-                            'start_time': start_time,
-                            'meeting_name': event.get('summary')
-                        }
-                else:
-                    meet_link = event['conferenceData'].get('entryPoints')[0].get('uri')
-                    print("Google Meet Link(Others): ", meet_link)
-                    if meet_link and is_time_in_future(start_time):
-                        return {
-                            'meet_link': meet_link,
-                            'start_time': start_time,
-                            'meeting_name': event.get('summary')
-                        }
+                meet_link = event['conferenceData'].get('entryPoints')[0].get('uri')
+                print("Google Meet Link(Others): ", meet_link)
+
         #checking if meeting is on Zoom
         elif 'description' in event and 'zoom' in event['description']:
             meet_link = event['description']
             print("Zoom Link: ", meet_link)
-            if meet_link and is_time_in_future(start_time):
-                return {
-                    'meet_link': meet_link,
-                    'start_time': start_time,
-                    'meeting_name': event.get('summary')
-                }
+        
+        if meet_link and is_time_in_future(start_time):
+            return {
+                'meet_link': meet_link,
+                'start_time': start_time,
+                'meeting_name': event.get('summary')
+            }
         print ('\n')
 
 def is_time_in_future(meet_start_time):
@@ -91,7 +81,7 @@ def is_time_in_future(meet_start_time):
 
 def open_meeting_in_browser(meet_link):
     print('Initiating meeting at:', meet_link)
-    webbrowser.open(meet_link)
+    webbrowser.open(meet_link, new=1)
 
 def get_time_till_next_meeting(meeting_start_time):
     if meeting_start_time:
@@ -99,7 +89,7 @@ def get_time_till_next_meeting(meeting_start_time):
         return (meeting_start_time - datetime.datetime.now()).seconds
     return SLEEP_WINDOW_SECS + 10
 
-def alert_on_meeting(meeting_name):
+def alert_on_meeting():
     #text to speech function to alert
     alert_message = "Meeting will start now! Click on join now!"
     speech_engine.say(alert_message)
@@ -117,7 +107,7 @@ def main():
             open_meeting_in_browser(meeting_link)
             meeting_should_be_shown_soon = False
             meeting_link = None
-            alert_on_meeting(meeting_name)
+            alert_on_meeting()
             meeting_name = ''
         # getting the next meeting
         else:
