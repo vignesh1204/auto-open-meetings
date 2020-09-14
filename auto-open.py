@@ -9,7 +9,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 from time import sleep
 import webbrowser
 import time
@@ -18,10 +17,10 @@ import pyttsx3
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar']
-SLEEP_WINDOW_SECS = 60 * 30
+SLEEP_WINDOW_SECS = 60 * 40
 OPEN_MEETING_MINUTES_BEFORE = 0
 speech_engine = pyttsx3.init()
-speech_engine.setProperty('rate', 165)
+speech_engine.setProperty('rate', 175)
 
 class Join:
     def __init__(self, platform, username, password, url):
@@ -59,11 +58,13 @@ class Join:
             sleep(1)
             #joining
             self.driver.find_element_by_xpath('//*[@class="XCoPyb"]/div[1]').click()
+            sleep(2400)
         elif platform == 'Zoom':
             self.driver = webdriver.Chrome(chrome_options=opt, executable_path='./chromedriver')
             self.driver.get(url)
             sleep(10)
             speech_engine.say("Manual operation required.")
+            sleep(2400)
 
 
 def get_creds():
@@ -111,7 +112,7 @@ def get_meeting_info():
     #Call the Calendar API and get now time
     now = datetime.datetime.utcnow().isoformat() + 'Z' 
     #Setting time window for 8 hours after which app will stop running
-    now_plus_window = (datetime.datetime.utcnow() + datetime.timedelta(hours=24)).isoformat() + 'Z'
+    now_plus_window = (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).isoformat() + 'Z'
     print('\nGetting the upcoming events\n')
     events_result = service.events().list(calendarId='primary', timeMin=now, timeMax=now_plus_window, maxResults=5, singleEvents=True, orderBy='startTime').execute()
     events = events_result.get('items', [])
