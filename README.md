@@ -14,7 +14,7 @@ Copy credentials.json into the directory where this repo has been cloned.
 
 ```pip install -r dependencies.txt```
 
-Download required chromedriver version from (https://chromedriver.chromium.org/) and move it to the working directory.
+Download required chromedriver version from https://chromedriver.chromium.org/ and move it to the working directory.
 
 Before running script, make sure Gmail account details have been added in auto-open.py lines 159 and 160.
 
