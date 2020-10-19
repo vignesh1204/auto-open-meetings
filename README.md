@@ -1,4 +1,4 @@
-# google-meet-auto-join
+# auto-join-meetings
 
 Only works in Python2 and Google Chrome.
 
