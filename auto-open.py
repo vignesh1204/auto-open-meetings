@@ -85,26 +85,6 @@ def get_creds():
             pickle.dump(creds, token)
     return creds
 
-""" #ONLY FOR TESTING
-def add_event(start_time, end_time):
-    creds = get_creds()
-    service = build('calendar', 'v3', credentials=creds)
-
-    event = {
-        'summary': 'TestMeetingNew',
-        'description': 'meet.google.com/urk-sgmr-cwy',
-        'start': {
-            'dateTime': start_time,
-            'timeZone': 'Asia/Kolkata',
-        },
-        'end': {
-            'dateTime': end_time,
-            'timeZone': 'Asia/Kolkata',
-        }
-    }
-    event = service.events().insert(calendarId='primary', body=event).execute()
-    print ('Event created: %s' % (event.get('htmlLink')))"""
-
 def get_meeting_info():
     creds = get_creds()
     service = build('calendar', 'v3', credentials=creds)
@@ -123,11 +103,11 @@ def get_meeting_info():
         start_time = datetime.datetime.strptime(event['start'].get('dateTime', event['start'].get('date')), '%Y-%m-%dT%H:%M:%S+05:30')
         print(start_time, event['summary'])
 
-        #checking if its cloud computing class lol
-        if 'Babukarthik' in event['summary'] or 'TestMeetingNew' in event['summary']:
+        #checking if its test event
+        if 'TestMeetingNew' in event['summary']:
             meet_link = 'https://' + event['description'].split()[-1]
             platform = 'Meet'
-            print("Google Meet Link(Babu): ", meet_link)
+            print("Google Meet Link(Test): ", meet_link)
 
         #checking if Google meet link is attached
         if 'conferenceData' in event:
@@ -157,8 +137,8 @@ def open_meeting_in_browser(meet_link, platform):
     print('Initiating meeting at:', meet_link)
 
     #Add Gmail ID and password before running
-    username = ''
-    password = ''
+    username = 'vignesh1999@gmail.com'
+    password = 'OneTwoThree123hello'
     Join(platform, username, password, meet_link)
 
 def get_time_till_next_meeting(meeting_start_time):
@@ -178,9 +158,6 @@ def main():
     meeting_link = None
     secs_till_next_meeting = SLEEP_WINDOW_SECS + 10
     meeting_name = ''
-
-    """ #ONLY FOR TESTING
-    add_event((datetime.datetime.now() + datetime.timedelta(seconds=40)).isoformat(), (datetime.datetime.now() + datetime.timedelta(minutes=5)).isoformat())"""
 
     while True:
         # showing the next meeting
