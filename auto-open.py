@@ -137,8 +137,8 @@ def open_meeting_in_browser(meet_link, platform):
     print('Initiating meeting at:', meet_link)
 
     #Add Gmail ID and password before running
-    username = 'vignesh1999@gmail.com'
-    password = 'OneTwoThree123hello'
+    username = ''
+    password = ''
     Join(platform, username, password, meet_link)
 
 def get_time_till_next_meeting(meeting_start_time):
